@@ -55,6 +55,6 @@
 
 <style scoped lang="scss">
 .navigation-bar {
-    height: 60px;
+    height: 3vh;
 }
 </style>

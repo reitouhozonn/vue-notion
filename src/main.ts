@@ -12,7 +12,7 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: "/study/binding",
         name: "binding",
-        component: import('./components/study/BindingPAge.vue'),
+        component: import('./components/study/BindingPage.vue'),
     },
     {
         path: "/study/directive",

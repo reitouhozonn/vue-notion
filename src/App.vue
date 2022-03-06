@@ -1,7 +1,6 @@
 <script setup lang="ts">
 
 import NavigationBar from './components/NavigationBar.vue';
-import MainPage from './components/MainPage.vue';
 
 </script>
 
@@ -15,5 +14,10 @@ import MainPage from './components/MainPage.vue';
 <style>
 #app {
     height: 100vh;
+}
+button.transparent {
+    margin: 5px;
+    background: transparent;
+    border: none;
 }
 </style>
