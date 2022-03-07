@@ -21,7 +21,7 @@
         <i class="fas fa-edit"></i>
       </div>
       <div class="button-icon">
-        <i class="fas fa-trash"></i>
+        <i class="fas fa-trash" @click="onClickDelete('delete')"></i>
       </div>
     </div>
   </div>
@@ -33,12 +33,13 @@ const NoteItem: any = defineProps({
   note: null,
 })
 
-const onMouseOver = () => {
+function onMouseOver() {
   NoteItem.note.mouseover = true;
 }
-const onMouseLeave = () => {
+function onMouseLeave() {
   NoteItem.note.mouseover = false;
 }
+const onClickDelete = defineEmits(["delete", "note"])
 
 
 </script>
