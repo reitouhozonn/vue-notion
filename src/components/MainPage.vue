@@ -1,39 +1,61 @@
 <template>
   <div class="main-page">
-    <div class="left-menu">
+    <div class="left-menu" @click.self="onEditNoteEnd()">
       <NoteItem
         v-for="note in noteList"
         v-bind:note="note"
         v-bind:key="note.id"
         @delete="onDeleteNote"
+        @editEnd="onEditNoteEnd"
+        @editStart="onEditNoteStart"
       />
       <button class="transparent" @click="onClickButtonAdd">
         <i class="fas fa-plus-square"></i>ノートを追加
       </button>
     </div>
-    <div class="right-view">right-view</div>
+    <div class="right-view" @click.self="onEditNoteEnd()">right-view</div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { devtools, reactive, ref } from 'vue';
 import NoteItem from './parts/NoteItem.vue';
 
 // const noteList: any = reactive([
 // ]);
-const noteList: any = ref([])
+// interface refs {
+//   []: Array<invalid>
+// }
+
+const noteList: any = ref([]);
 
 function onClickButtonAdd(): void {
   noteList.value.push({
     id: new Date().getTime().toString(16),
     name: "新規ノート!",
     mouseover: false,
+    editing: false,
   });
 }
 
 function onDeleteNote(): void {
   const index = noteList.value.indexOf();
   noteList.value.splice(index, 1);
+}
+
+// function onEditNoteStart() {
+//   for (let note of noteList) {
+//     note.editing = true;
+//   }
+// }
+function onEditNoteStart() {
+  for (let note of noteList.value) {
+    note.editing = (note.id == note.id);
+  }
+}
+const onEditNoteEnd = () => {
+  for (let note of noteList.value)
+    note.editing = false;
 }
 
 </script>

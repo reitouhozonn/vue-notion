@@ -3,43 +3,60 @@
     class="note"
     @mouseover="onMouseOver"
     @mouseleave="onMouseLeave"
-    v-bind:class="{ mouseover: note.mouseover }"
+    v-bind:class="{ mouseover: note.mouseover && !note.editing }"
   >
-    <div class="note-icon">
-      <i class="fas fa-file-alt"></i>
-    </div>
-    <div class="note-name">{{ note.id }}</div>
+    <template v-if="note.editing">
+      <input class="transparent" v-model="note.name" @keypress.enter="emit('editEnd')" />
+    </template>
+    <template v-else>
+      <div class="note-icon">
+        <i class="fas fa-file-alt"></i>
+      </div>
+      <div class="note-name">{{ note.name }}</div>
 
-    <div v-show="note.mouseover" class="buttons">
-      <div class="button-icon">
-        <i class="fas fa-sitemap"></i>
+      <div v-show="note.mouseover" class="buttons">
+        <div class="button-icon">
+          <i class="fas fa-sitemap"></i>
+        </div>
+        <div class="button-icon">
+          <i class="fas fa-plus-circle"></i>
+        </div>
+        <div class="button-icon" @click="emit('editStart')">
+          <i class="fas fa-edit"></i>
+        </div>
+        <div class="button-icon" @click="emit('delete')">
+          <i class="fas fa-trash"></i>
+        </div>
       </div>
-      <div class="button-icon">
-        <i class="fas fa-plus-circle"></i>
-      </div>
-      <div class="button-icon">
-        <i class="fas fa-edit"></i>
-      </div>
-      <div class="button-icon">
-        <i class="fas fa-trash" @click="onClickDelete('delete')"></i>
-      </div>
-    </div>
+    </template>
   </div>
 </template>
 
 <script setup lang="ts">
 
-const NoteItem: any = defineProps({
+
+// interface prop {
+//   mouseover?: boolean | undefined;
+//   name?: string | undefined;
+//   id?: string | undefined;
+// }
+const emit = defineEmits([
+  'delete', 'note',
+  'editStart',
+  'note',
+  'editEnd',
+]);
+
+const NoteItem = defineProps({
   note: null,
 })
 
-function onMouseOver() {
+function onMouseOver(): void {
   NoteItem.note.mouseover = true;
 }
-function onMouseLeave() {
+function onMouseLeave(): void {
   NoteItem.note.mouseover = false;
 }
-const onClickDelete = defineEmits(["delete", "note"])
 
 
 </script>
