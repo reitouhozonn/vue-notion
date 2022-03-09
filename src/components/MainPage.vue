@@ -5,6 +5,7 @@
         v-for="note in noteList"
         v-bind:note="note"
         v-bind:key="note.id"
+        @addChild="onAddChildNote(note)"
         @delete="onDeleteNote"
         @editEnd="onEditNoteEnd"
       />
@@ -17,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { devtools, reactive, ref } from 'vue';
+import { ref } from 'vue';
 import NoteItem from './parts/NoteItem.vue';
 
 // const noteList: any = reactive([
@@ -28,12 +29,25 @@ import NoteItem from './parts/NoteItem.vue';
 
 const noteList: any = ref([]);
 
+
 function onClickButtonAdd(): void {
   noteList.value.push({
     id: new Date().getTime().toString(16),
     name: "新規ノート!",
     mouseover: false,
     editing: false,
+    children: [],
+  });
+}
+
+function onAddChildNote(note: any) {
+  // alert(note.id)
+  note.children.push({
+    id: new Date().getTime().toString(16),
+    name: 'の子',
+    mouseover: false,
+    editing: false,
+    children: [],
   });
 }
 
@@ -47,12 +61,14 @@ function onDeleteNote(): void {
 //     note.editing = true;
 //   }
 // }
-
-
 const onEditNoteEnd = () => {
   for (let note of noteList.value)
     note.editing = false;
 }
+
+// defineComponent({
+//   NoteItem,
+// })
 
 </script>
 
