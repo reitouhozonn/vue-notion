@@ -6,7 +6,13 @@
     v-bind:class="{ mouseover: note.mouseover && !note.editing }"
   >
     <template v-if="note.editing">
-      <input class="transparent" v-model="note.name" @keypress.enter="emit('editEnd')" />
+      <input
+        v-my-focus="'input'"
+        type="text"
+        class="transparent"
+        v-model="note.name"
+        @keypress.enter="emit('editEnd')"
+      />
     </template>
     <template v-else>
       <div class="note-icon">
@@ -21,7 +27,7 @@
         <div class="button-icon">
           <i class="fas fa-plus-circle"></i>
         </div>
-        <div class="button-icon" @click="emit('editStart')">
+        <div class="button-icon" @click="onEditNoteStart">
           <i class="fas fa-edit"></i>
         </div>
         <div class="button-icon" @click="emit('delete')">
@@ -41,7 +47,7 @@
 //   id?: string | undefined;
 // }
 const emit = defineEmits([
-  'delete', 'note',
+  'delete',
   'editStart',
   'note',
   'editEnd',
@@ -51,11 +57,20 @@ const NoteItem = defineProps({
   note: null,
 })
 
+const vMyFocus = {
+  mounted: (el: any): void => {
+    el.focus();
+  }
+}
+
 function onMouseOver(): void {
   NoteItem.note.mouseover = true;
 }
 function onMouseLeave(): void {
   NoteItem.note.mouseover = false;
+}
+function onEditNoteStart() {
+  NoteItem.note.editing = true
 }
 
 

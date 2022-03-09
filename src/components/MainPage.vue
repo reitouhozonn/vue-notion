@@ -7,7 +7,6 @@
         v-bind:key="note.id"
         @delete="onDeleteNote"
         @editEnd="onEditNoteEnd"
-        @editStart="onEditNoteStart"
       />
       <button class="transparent" @click="onClickButtonAdd">
         <i class="fas fa-plus-square"></i>ノートを追加
@@ -44,15 +43,12 @@ function onDeleteNote(): void {
 }
 
 // function onEditNoteStart() {
-//   for (let note of noteList) {
+//   for (let note of noteList.value) {
 //     note.editing = true;
 //   }
 // }
-function onEditNoteStart() {
-  for (let note of noteList.value) {
-    note.editing = (note.id == note.id);
-  }
-}
+
+
 const onEditNoteEnd = () => {
   for (let note of noteList.value)
     note.editing = false;
