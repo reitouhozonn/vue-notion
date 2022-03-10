@@ -12,7 +12,7 @@
           type="text"
           class="transparent"
           v-model="note.name"
-          @keypress.enter="emits('editEnd')"
+          @keypress.enter="emits('ChildEditEnd')"
         />
       </template>
       <template v-else>
@@ -22,7 +22,7 @@
         <div class="note-name">{{ note.name }}</div>
 
         <div v-show="note.mouseover" class="buttons">
-          <div class="button-icon" @click="emits('addChild')">
+          <div class="button-icon" @click="emits('ChildAddChild')">
             <i class="fas fa-sitemap"></i>
           </div>
           <div class="button-icon">
@@ -31,27 +31,23 @@
           <div class="button-icon" @click="onEditNoteStart">
             <i class="fas fa-edit"></i>
           </div>
-          <div class="button-icon" @click="emits('delete')">
+          <div class="button-icon" @click="emits('ChildDelete')">
             <i class="fas fa-trash"></i>
           </div>
         </div>
       </template>
     </div>
     <div class="child-note">
-      <ChildNote
+      <!-- <NoteItem
         v-for="childNote in note.children"
         v-bind:note="childNote"
         v-bind:key="childNote.id"
-        @ChildDelete="emits('delete')"
-        @ChildEditEnd="emits('editEnd')"
-        @ChildAddChild="emits('editEnd')"
-      />
+      />-->
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import ChildNote from "./ChildNote.vue";
 
 // interface prop {
 //   mouseover?: boolean | undefined;
@@ -61,15 +57,14 @@ import ChildNote from "./ChildNote.vue";
 
 // }
 const emits = defineEmits([
-  'delete',
-  'editStart',
-  'note',
-  'editEnd',
-  'addChild',
-  'onAddChildNote',
+  'ChildDelete',
+  'ChildEditStart',
+  'ChildEditEnd',
+  'ChildAddChild',
+  'ChildOnAddChildNote',
 ]);
 
-const NoteItem = defineProps({
+const ChildNote = defineProps({
   note: null,
   // childNote: null,
 })
@@ -83,13 +78,13 @@ const vMyFocus = {
 
 
 function onMouseOver(): void {
-  NoteItem.note.mouseover = true;
+  ChildNote.note.mouseover = true;
 }
 function onMouseLeave(): void {
-  NoteItem.note.mouseover = false;
+  ChildNote.note.mouseover = false;
 }
 function onEditNoteStart() {
-  NoteItem.note.editing = true
+  ChildNote.note.editing = true
 }
 
 

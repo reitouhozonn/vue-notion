@@ -18,9 +18,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { defineComponent, ref } from 'vue';
 import NoteItem from './parts/NoteItem.vue';
-
+import ChildNoteVue from './parts/ChildNote.vue';
 // const noteList: any = reactive([
 // ]);
 // interface refs {
