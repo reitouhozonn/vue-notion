@@ -31,7 +31,7 @@
           <div class="button-icon" @click="onEditNoteStart">
             <i class="fas fa-edit"></i>
           </div>
-          <div class="button-icon" @click="emits('ChildDelete')">
+          <div class="button-icon" @click="emits('ChildDelete', ChildNote.note)">
             <i class="fas fa-trash"></i>
           </div>
         </div>
@@ -49,23 +49,18 @@
 
 <script setup lang="ts">
 
-// interface prop {
-//   mouseover?: boolean | undefined;
-//   name?: string | undefined;
-//   id?: string | undefined;
-
-
-// }
 const emits = defineEmits([
   'ChildDelete',
   'ChildEditStart',
   'ChildEditEnd',
   'ChildAddChild',
   'ChildOnAddChildNote',
+  'note'
 ]);
 
 const ChildNote = defineProps({
   note: null,
+  // parentNote: null,
   // childNote: null,
 })
 
@@ -86,6 +81,11 @@ function onMouseLeave(): void {
 function onEditNoteStart() {
   ChildNote.note.editing = true
 }
+// function onEditNoteEnd() {
+//   // for (let note of childNote)
+//   ChildNote.note.editing = false;
+// }
+
 
 
 </script>

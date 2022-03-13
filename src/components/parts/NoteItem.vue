@@ -12,7 +12,7 @@
           type="text"
           class="transparent"
           v-model="note.name"
-          @keypress.enter="emits('editEnd')"
+          @keypress.enter="emits('editEnd', note)"
         />
       </template>
       <template v-else>
@@ -22,7 +22,7 @@
         <div class="note-name">{{ note.name }}</div>
 
         <div v-show="note.mouseover" class="buttons">
-          <div class="button-icon" @click="emits('addChild')">
+          <div class="button-icon" @click="emits('addChild', note)">
             <i class="fas fa-sitemap"></i>
           </div>
           <div class="button-icon">
@@ -31,14 +31,16 @@
           <div class="button-icon" @click="onEditNoteStart">
             <i class="fas fa-edit"></i>
           </div>
-          <div class="button-icon" @click="emits('delete')">
+          <div class="button-icon" @click="emits('delete', note)">
             <i class="fas fa-trash"></i>
           </div>
         </div>
       </template>
     </div>
+    <!-- <template> -->
     <div class="child-note">
-      <ChildNote
+      {{ note.children }}
+      <NoteItem
         v-for="childNote in note.children"
         v-bind:note="childNote"
         v-bind:key="childNote.id"
@@ -47,19 +49,17 @@
         @ChildAddChild="emits('editEnd')"
       />
     </div>
+    <!-- </template> -->
   </div>
 </template>
 
 <script setup lang="ts">
-import ChildNote from "./ChildNote.vue";
-
-// interface prop {
-//   mouseover?: boolean | undefined;
-//   name?: string | undefined;
-//   id?: string | undefined;
+import { defineComponent } from 'vue';
+import ChildNote from './ChildNote.vue';
+import ChildNote1 from './ChildNote.vue';
 
 
-// }
+
 const emits = defineEmits([
   'delete',
   'editStart',
@@ -67,12 +67,18 @@ const emits = defineEmits([
   'editEnd',
   'addChild',
   'onAddChildNote',
+  'parentNote',
+  'childNote,'
 ]);
 
 const NoteItem = defineProps({
   note: null,
+  // parentNote: null,
   // childNote: null,
 })
+// const NoteItem: any = withDefaults(defineProps(), {
+//   note: null,
+// })
 
 const vMyFocus = {
   mounted: (el: any): void => {
@@ -92,6 +98,9 @@ function onEditNoteStart() {
   NoteItem.note.editing = true
 }
 
+defineComponent({
+  NoteItem,
+})
 
 </script>
 
