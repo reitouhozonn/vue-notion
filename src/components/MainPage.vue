@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, toRefs } from 'vue';
+import { ref } from 'vue';
 import NoteItem from './parts/NoteItem.vue';
 import WidgetItem from './parts/WidgetItem.vue';
 
@@ -53,8 +53,8 @@ const selectedNote: any = ref(null);
 
 
 
-function onClickButtonAdd(): void {
-  noteList.value.push({
+function onClickButtonAdd(targetList: any): void {
+  const note = {
     id: new Date().getTime().toString(16),
     name: "新規ノート!",
     mouseover: false,
@@ -62,7 +62,9 @@ function onClickButtonAdd(): void {
     selected: false,
     children: [],
     widgetList: [],
-  });
+  }
+  onAddWidgetCommon(note.widgetList, null, null)
+  noteList.value.push(note)
 }
 
 // function onAddChildNote(note: any) {
@@ -122,16 +124,14 @@ function onEditNoteEnd(note: any) {
 //     }
 //     return '';
 //   },
-//   return searchSelectedPath(noteList.value),
+//   return searchSelectedPath(noteList.value)
 // }
 
 
 //##############  Widget ##################
 
-const onAddWidgetCommon = (targetList: any,) => {
-  let layerNumber = null;
-  const layer = layerNumber || 1;
-
+const onAddWidgetCommon = (targetList: any, layer: any, index: any) => {
+  layer = layer || 1;
   const widgetItems = {
     id: new Date().getTime().toString(16),
     type: "heading",
@@ -140,39 +140,31 @@ const onAddWidgetCommon = (targetList: any,) => {
     children: [],
     layer: layer,
   }
-  // if (index == null) {
-  selectedNote.value.widgetList.push(widgetItems);
-  // } else {
-  //    targetList.splice(index + 1, 0, widget);
-}
-const onClickButtonAddWidget = (targetList: any) => {
-  onAddWidgetCommon(selectedNote.widgetList);
-}
-const onAddChildWidget = (targetList: any) => {
-  let layerNumber = null;
-  const layer = layerNumber || 1;
-
-  const widgetItems = {
-    id: new Date().getTime().toString(16),
-    type: "heading",
-    text: "child",
-    mouseover: false,
-    children: [],
-    layer: layer,
+  if (index == null) {
+    targetList.push(widgetItems);
+  } else {
+    targetList.splice(index + 1, 0, widgetItems);
   }
-  // layer + 1;
-  targetList.children.push(widgetItems)
 }
 
-const onAddWidgetAfter = (parentWidget: any) => {
-  const targetList = parentWidget == null ? selectedNote.value.widgetList : parentWidget;
+function onClickButtonAddWidget(): void {
+  onAddWidgetCommon(selectedNote.value.widgetList, null, null);
+}
+const onAddChildWidget = (widget: any) => {
+  onAddWidgetCommon(widget.children, widget.layer + 1, null)
+}
+
+const onAddWidgetAfter = (parentWidget: any, note: any) => {
+  const targetList = parentWidget == null ? selectedNote.value.widgetList : parentWidget.children;
   const layer = parentWidget == null ? null : parentWidget.layer + 1;
-  onAddWidgetCommon(targetList);
+  const index = targetList.indexOf(note)
+  console.log(note)
+  onAddWidgetCommon(targetList, layer, index);
 }
 
 const onDeleteWidget = (parentWidget: any, widget: any) => {
-  const targetList = parentWidget == null ? selectedNote.value.widgetList : parentWidget.value.children;
-  const index = targetList.indexOf();
+  const targetList = parentWidget == null ? selectedNote.value.widgetList : parentWidget.children;
+  const index = targetList.indexOf(widget);
   targetList.splice(index, 1);
 }
 

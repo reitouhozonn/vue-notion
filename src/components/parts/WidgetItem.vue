@@ -66,6 +66,10 @@ const emits = defineEmits([
   align-items: center;
   padding: 5px 10px;
   color: rgba(25, 23, 17, 0.6);
+  &.mouseover {
+    background-color: rgb(232, 231, 228);
+    cursor: pointer;
+  }
   .buttons {
     display: flex;
     flex-direction: row;
