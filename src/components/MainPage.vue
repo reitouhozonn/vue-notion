@@ -5,7 +5,7 @@
         v-for="note in noteList"
         v-bind:note="note"
         v-bind:key="note.id"
-        @delete="onDeleteNote"
+        @delete="onDeleteNote(note)"
         @editEnd="onEditNoteEnd(note)"
         @select="onSelectNote(note)"
       />
@@ -24,6 +24,18 @@
         </div>
         <div class="note-content">
           <h3 class="note-title">{{ selectedNote.name }}</h3>
+          <WidgetItem
+            v-for="widget in selectedNote.widgetList"
+            v-bind:widget="widget"
+            v-bind:layer="1"
+            v-bind:key="widget.id"
+            @delete="onDeleteWidget"
+            @addChild="onAddChildWidget"
+            @addWidgetAfter="onAddWidgetAfter"
+          />
+          <button class="transparent" @click="onClickButtonAddWidget">
+            <i class="fas fa-plus-square"></i>ウィジェットを追加
+          </button>
         </div>
       </template>
     </div>
@@ -31,17 +43,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineComponent, ref } from 'vue';
+import { ref, toRefs } from 'vue';
 import NoteItem from './parts/NoteItem.vue';
-// const noteList: any = reactive([
-// ]);
-// interface refs {
-//   any
-// }
+import WidgetItem from './parts/WidgetItem.vue';
 
 const noteList: any = ref([]);
 const selectedNote: any = ref(null);
-// const note = ref([])
+
+
 
 
 function onClickButtonAdd(): void {
@@ -52,6 +61,7 @@ function onClickButtonAdd(): void {
     editing: false,
     selected: false,
     children: [],
+    widgetList: [],
   });
 }
 
@@ -78,7 +88,7 @@ const onSelectNote = (targetNote: any) => {
   selectedNote.value = targetNote;
 }
 
-function onDeleteNote(): void {
+function onDeleteNote(note: any): void {
   // console.log(note)
   // const targetList = note == !null
   //   ? noteList.value
@@ -86,16 +96,16 @@ function onDeleteNote(): void {
   // const index = targetList.indexOf(note);
   // targetList.splice(index, 1);
 
-
   const index = noteList.value.indexOf();
   noteList.value.splice(index, 1);
+
 }
 
-function onEditNoteStart() {
-  for (let note of noteList.value) {
-    note.editing = true;
-  }
-}
+// function onEditNoteStart() {
+//   for (let note of noteList.value) {
+//     note.editing = true;
+//   }
+// }
 function onEditNoteEnd(note: any) {
   for (let n of noteList.value)
     n.editing = false;
@@ -116,9 +126,55 @@ function onEditNoteEnd(note: any) {
 // }
 
 
-// defineComponent({
-//   NoteItem,
-// })
+//##############  Widget ##################
+
+const onAddWidgetCommon = (targetList: any,) => {
+  let layerNumber = null;
+  const layer = layerNumber || 1;
+
+  const widgetItems = {
+    id: new Date().getTime().toString(16),
+    type: "heading",
+    text: "",
+    mouseover: false,
+    children: [],
+    layer: layer,
+  }
+  // if (index == null) {
+  selectedNote.value.widgetList.push(widgetItems);
+  // } else {
+  //    targetList.splice(index + 1, 0, widget);
+}
+const onClickButtonAddWidget = (targetList: any) => {
+  onAddWidgetCommon(selectedNote.widgetList);
+}
+const onAddChildWidget = (targetList: any) => {
+  let layerNumber = null;
+  const layer = layerNumber || 1;
+
+  const widgetItems = {
+    id: new Date().getTime().toString(16),
+    type: "heading",
+    text: "child",
+    mouseover: false,
+    children: [],
+    layer: layer,
+  }
+  // layer + 1;
+  targetList.children.push(widgetItems)
+}
+
+const onAddWidgetAfter = (parentWidget: any) => {
+  const targetList = parentWidget == null ? selectedNote.value.widgetList : parentWidget;
+  const layer = parentWidget == null ? null : parentWidget.layer + 1;
+  onAddWidgetCommon(targetList);
+}
+
+const onDeleteWidget = (parentWidget: any, widget: any) => {
+  const targetList = parentWidget == null ? selectedNote.value.widgetList : parentWidget.value.children;
+  const index = targetList.indexOf();
+  targetList.splice(index, 1);
+}
 
 </script>
 

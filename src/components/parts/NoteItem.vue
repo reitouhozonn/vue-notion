@@ -32,7 +32,7 @@
           <div class="button-icon" @click="onEditNoteStart">
             <i class="fas fa-edit"></i>
           </div>
-          <div class="button-icon" @click="emits('delete')">
+          <div class="button-icon" @click="emits('delete', note)">
             <i class="fas fa-trash"></i>
           </div>
         </div>
@@ -76,9 +76,6 @@ const NoteItem = defineProps({
   // parentNote: null,
   // childNote: null,
 })
-// const NoteItem: any = withDefaults(defineProps(), {
-//   note: null,
-// })
 
 const vMyFocus = {
   mounted: (el: any): void => {
@@ -98,9 +95,6 @@ function onEditNoteStart() {
   NoteItem.note.editing = true
 }
 
-defineComponent({
-  NoteItem,
-})
 
 </script>
 
