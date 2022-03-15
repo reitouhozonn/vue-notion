@@ -4,7 +4,8 @@
       class="note"
       @mouseover="onMouseOver"
       @mouseleave="onMouseLeave"
-      v-bind:class="{ mouseover: note.mouseover && !note.editing }"
+      @click="emits('select', note)"
+      v-bind:class="{ mouseover: note.mouseover && !note.editing, selected: note.selected }"
     >
       <template v-if="note.editing">
         <input
@@ -22,23 +23,23 @@
         <div class="note-name">{{ note.name }}</div>
 
         <div v-show="note.mouseover" class="buttons">
-          <div class="button-icon" @click="emits('addChild', note)">
+          <!-- <div class="button-icon" @click="emits('addChild', note)">
             <i class="fas fa-sitemap"></i>
-          </div>
+          </div>-->
           <div class="button-icon">
             <i class="fas fa-plus-circle"></i>
           </div>
           <div class="button-icon" @click="onEditNoteStart">
             <i class="fas fa-edit"></i>
           </div>
-          <div class="button-icon" @click="emits('delete', note)">
+          <div class="button-icon" @click="emits('delete')">
             <i class="fas fa-trash"></i>
           </div>
         </div>
       </template>
     </div>
     <!-- <template> -->
-    <div class="child-note">
+    <!-- <div class="child-note">
       {{ note.children }}
       <NoteItem
         v-for="childNote in note.children"
@@ -48,15 +49,13 @@
         @ChildEditEnd="emits('editEnd')"
         @ChildAddChild="emits('editEnd')"
       />
-    </div>
+    </div>-->
     <!-- </template> -->
   </div>
 </template>
 
 <script setup lang="ts">
 import { defineComponent } from 'vue';
-import ChildNote from './ChildNote.vue';
-import ChildNote1 from './ChildNote.vue';
 
 
 
@@ -68,7 +67,8 @@ const emits = defineEmits([
   'addChild',
   'onAddChildNote',
   'parentNote',
-  'childNote,'
+  'childNote,',
+  'select'
 ]);
 
 const NoteItem = defineProps({
@@ -115,6 +115,11 @@ defineComponent({
   &.mouseover {
     background-color: rgb(232, 231, 228);
     cursor: pointer;
+  }
+  &.selected {
+    color: black;
+    background-color: rgb(232, 231, 228);
+    font-weight: 600;
   }
   .note-icon {
     margin-left: 10px;
