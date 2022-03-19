@@ -1,6 +1,7 @@
 <template>
   <div class="main-page">
-    <div class="left-menu" @click.self="onEditNoteEnd">
+    <div class="left-menu">
+      <!-- @click.self="onEditNoteEnd" -->
       <NoteItem
         v-for="note in noteList"
         v-bind:note="note"
@@ -17,13 +18,14 @@
         <i class="fas fa-plus-square"></i>ノートを追加
       </button>
     </div>
-    <div class="right-view" @click.self="onEditNoteEnd">
+    <div class="right-view">
+      <!-- @click.self="onEditNoteEnd" -->
       <template v-if="selectedNote == null">
         <div class="no-selected-note">ノートを選択してください</div>
       </template>
       <template v-else>
         <div class="path">
-          <!-- <small>{{ selectedPath }}</small> -->
+          <small>{{ selectedPath }}</small>
         </div>
         <div class="note-content">
           <h3 class="note-title">{{ selectedNote.name }}</h3>
@@ -46,13 +48,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed, defineComponent } from 'vue';
 import NoteItem from './parts/NoteItem.vue';
+
 import WidgetItem from './parts/WidgetItem.vue';
 
 const noteList: any = ref([]);
 const selectedNote: any = ref(null);
-// const parentNote: any = ref(null);
 
 
 const onAddNoteCommon = (targetList: any, layer: any, index: any) => {
@@ -92,9 +94,9 @@ const onAddNoteAfter = (parentNote: any, note: any) => {
 
 const onSelectNote = (targetNote: any) => {
   const updateSelectStatus = function (targetNote: any, noteList: any) {
-    for (let note of noteList) {
-      note.selected = (note.id === targetNote.id);
-      updateSelectStatus(targetNote, note.children);
+    for (let n of noteList) {
+      n.selected = (n.id === targetNote.id);
+      updateSelectStatus(targetNote, n.children);
     }
   }
   updateSelectStatus(targetNote, noteList.value);
@@ -103,12 +105,12 @@ const onSelectNote = (targetNote: any) => {
 }
 
 const onDeleteNote = (parentNote: any, note: any): void => {
-  console.log(parentNote == null)
-  console.log(parentNote, note)
+  // console.log(parentNote, note)
   const targetList = parentNote == null
     ? noteList.value
     : parentNote.children;
   const index = targetList.indexOf(note);
+  console.log(parentNote)
   targetList.splice(index, 1);
   // const index = noteList.value.indexOf();
   // noteList.value.splice(index, 1);
@@ -134,18 +136,18 @@ const onEditNoteEnd = (parentNote: any) => {
     note.editing = false;
   }
 }
-// const selectedPath = computed({
-//   const searchSelectedPath = function (noteList, path) {
-//     for (let note of noteList) {
-//       const currentPath = path == null ? note.name : `${path} / ${note.name}`;
-//       if (note.selected) return currentPath;
-//       const selectedPath = searchSelectedPath(note.children, currentPath);
-//       if (selectedPath.length > 0) return selectedPath;
-//     }
-//     return '';
-//   },
-//   return searchSelectedPath(noteList.value)
-// }
+const selectedPath = computed(() => {
+  const searchSelectedPath: any = function (noteList: any, path: any) {
+    for (let note of noteList) {
+      const currentPath = path == null ? note.name : `${path} / ${note.name}`;
+      if (note.selected) return currentPath;
+      const selectedPath = searchSelectedPath(note.children, currentPath);
+      if (selectedPath.length > 0) return selectedPath;
+    }
+    return '';
+  }
+  return searchSelectedPath(noteList.value)
+})
 
 
 //##############  Widget ##################
@@ -187,8 +189,6 @@ const onDeleteWidget = (parentWidget: any, widget: any) => {
   const index = targetList.indexOf(widget);
   targetList.splice(index, 1);
 }
-
-
 
 </script>
 

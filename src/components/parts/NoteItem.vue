@@ -21,46 +21,48 @@
           <i class="fas fa-file-alt"></i>
         </div>
         <div class="note-name">{{ note.name }}</div>
-      </template>
 
-      <div v-show="note.mouseover" class="buttons">
-        <div class="button-icon" v-if="layer < 3" @click="emits('addChild', note)">
-          <i class="fas fa-sitemap"></i>
+        <div v-show="note.mouseover" class="buttons">
+          <div class="button-icon" v-if="layer < 3" @click="emits('addChild', note)">
+            <i class="fas fa-sitemap"></i>
+          </div>
+          <div class="button-icon" @click="emits('addNoteAfter', parentNote, note)">
+            <i class="fas fa-plus-circle"></i>
+          </div>
+          <div class="button-icon" @click="emits('editStart', note)">
+            <i class="fas fa-edit"></i>
+          </div>
+          <div class="button-icon" @click="emits('delete', parentNote, note)">
+            <i class="fas fa-trash"></i>
+          </div>
         </div>
-        <div class="button-icon" @click="emits('addNoteAfter', parentNote, note)">
-          <i class="fas fa-plus-circle"></i>
-        </div>
-        <div class="button-icon" @click="emits('editStart', note)">
-          <i class="fas fa-edit"></i>
-        </div>
-        <div class="button-icon" @click="emits('delete', parentNote, note)">
-          <i class="fas fa-trash"></i>
-        </div>
-      </div>
+      </template>
     </div>
-    <!-- <template> -->
     <div class="child-note">
       <!-- {{ parentNote }} -->
+
       <NoteItem
         v-for="childNote in note.children"
         v-bind:note="childNote"
-        v-bind:parentNote="childNote"
+        v-bind:parentNote="note"
         v-bind:key="childNote.id"
         v-bind:layer="layer + 1"
-        @delete="emits('delete', childNote, note)"
-        @editStart="emits('editStart', childNote, note)"
+        @delete="emits('delete', childNote)"
+        @editStart="emits('editStart', parentNote)"
         @editEnd="emits('editEnd', parentNote)"
         @select="emits('select', childNote)"
         @addChild="emits('addChild', childNote)"
         @addNoteAfter="emits('addNoteAfter', childNote, note)"
       />
     </div>
-    <!-- </template> -->
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent, toRef } from 'vue';
+
+import { watch, watchEffect } from 'vue';
+
+
 
 const props = defineProps({
   note: null,
@@ -68,7 +70,6 @@ const props = defineProps({
   // childNote: null,
   layer: null,
 })
-
 
 const emits = defineEmits([
   'delete',
