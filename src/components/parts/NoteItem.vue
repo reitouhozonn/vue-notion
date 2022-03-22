@@ -39,15 +39,14 @@
       </template>
     </div>
     <div class="child-note">
-      <!-- {{ parentNote }} -->
-
+      <!-- {{ note }} -->
       <NoteItem
         v-for="childNote in note.children"
         v-bind:note="childNote"
         v-bind:parentNote="note"
         v-bind:key="childNote.id"
         v-bind:layer="layer + 1"
-        @delete="emits('delete', childNote)"
+        @delete="emits('delete', childNote, note)"
         @editStart="emits('editStart', parentNote)"
         @editEnd="emits('editEnd', parentNote)"
         @select="emits('select', childNote)"
@@ -60,9 +59,6 @@
 
 <script setup lang="ts">
 
-import { watch, watchEffect } from 'vue';
-
-
 
 const props = defineProps({
   note: null,
@@ -70,6 +66,8 @@ const props = defineProps({
   // childNote: null,
   layer: null,
 })
+
+// const Props = toRefs(props);
 
 const emits = defineEmits([
   'delete',
@@ -94,8 +92,10 @@ function onMouseOver(): void {
 function onMouseLeave(): void {
   props.note.mouseover = false;
 }
-// function onEditNoteStart() {
-//   props.note.editing = true
+
+// const onParentNote = () => {
+//   let targetNote = pNote.value;
+//   return targetNote;
 // }
 
 

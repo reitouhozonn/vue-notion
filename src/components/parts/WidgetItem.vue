@@ -6,8 +6,21 @@
       @mouseleave="onMouseLeave"
       v-bind:class="{ mouseover: widget.mouseover }"
     >
-      ・
-      <input v-model="widget.text" class="transparent" placeholder="本文" />
+      <template v-if="widget.type == 'heading'">
+        <input type="text" v-model="widget.text" class="heading transparent" placeholder="見出し" />
+      </template>
+      <template v-if="widget.type == 'body'">
+        <input type="text" v-model="widget.text" class="body transparent" placeholder="本文" />
+      </template>
+      <template v-if="widget.type == 'code'">
+        <textarea
+          v-model="widget.text"
+          class="code"
+          rows="1"
+          placeholder="コード"
+          v-bind:ref="(el) => codeHeightId = el"
+        ></textarea>
+      </template>
       <div v-show="widget.mouseover" class="buttons">
         <div class="button-icon" v-if="layer < 3" @click="emits('addChild', widget)">
           <i class="fas fa-sitemap"></i>
@@ -19,7 +32,12 @@
           <i class="fas fa-trash"></i>
         </div>
         <div class="button-icon">
-          <i class="fas fa-cog"></i>
+          <i class="fas fa-cog" data-toggle="dropdown"></i>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" @click="widget.type = 'heading'">見出し</a>
+            <a class="dropdown-item" @click="widget.type = 'body'">本文</a>
+            <a class="dropdown-item" @click="widget.type = 'code'">ソースコード</a>
+          </div>
         </div>
       </div>
     </div>
@@ -39,11 +57,22 @@
 </template>
 
 <script setup lang="ts">
+import { reactive, ref, toRef, watch } from 'vue';
+
+
 const props = defineProps({
   widget: null,
   parentWidget: null,
   layer: null,
 })
+
+const codeHeightId = ref()
+
+const emits = defineEmits([
+  'delete',
+  'addChild',
+  'addWidgetAfter'
+])
 
 const onMouseOver = () => {
   props.widget.mouseover = true
@@ -51,12 +80,24 @@ const onMouseOver = () => {
 const onMouseLeave = () => {
   props.widget.mouseover = false
 }
-const emits = defineEmits([
-  'delete',
-  'addChild',
-  'addWidgetAfter'
-])
+
+const resizeCodeTextarea = () => {
+  if (props.widget.type !== 'code') return;
+  const textarea: any = codeHeightId.value;
+  const promise = new Promise(function (resolve: any) {
+    resolve(textarea.style = 'auto')
+  });
+  promise.then(function () {
+    textarea.style.height = textarea.scrollHeight + 'px'
+  });
+}
+watch(() => props.widget.text, () => {
+  resizeCodeTextarea()
+});
+
 </script>
+
+
 
 <style scoped lang="scss">
 .widget {
@@ -79,6 +120,27 @@ const emits = defineEmits([
       margin-left: 3px;
       border-radius: 5px;
     }
+  }
+  input.heading {
+    font-size: 20px;
+    font-weight: bold;
+    border-bottom: 1.5px solid #e0e0e0;
+  }
+  .code {
+    width: calc(100% - 120px);
+    height: 35px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 8px;
+    color: #f8f8f2;
+    background: #282a36;
+    font-size: 14px;
+    font-family: Consolas, Menlo, "Liberation Mono", Courier, monospace;
+    resize: none;
+  }
+  .code:focus {
+    outline: none;
+    box-shadow: none;
   }
 }
 .child-widget {

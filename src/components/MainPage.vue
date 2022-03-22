@@ -50,7 +50,6 @@
 <script setup lang="ts">
 import { ref, computed, defineComponent } from 'vue';
 import NoteItem from './parts/NoteItem.vue';
-
 import WidgetItem from './parts/WidgetItem.vue';
 
 const noteList: any = ref([]);
@@ -110,7 +109,7 @@ const onDeleteNote = (parentNote: any, note: any): void => {
     ? noteList.value
     : parentNote.children;
   const index = targetList.indexOf(note);
-  console.log(parentNote)
+  console.log(parentNote, note)
   targetList.splice(index, 1);
   // const index = noteList.value.indexOf();
   // noteList.value.splice(index, 1);
