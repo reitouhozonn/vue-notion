@@ -1,26 +1,29 @@
 <template>
   <div class="main-page">
-    <div class="left-menu" @click.self="onEditNoteEnd">
+    <div class="left-menu" @click.self="onEditNoteEnd()">
       <NoteItem
         v-for="note in noteList"
         v-bind:note="note"
+        v-bind:layer="1"
         v-bind:key="note.id"
-        @delete="onDeleteNote(note)"
-        @editEnd="onEditNoteEnd(note)"
-        @select="onSelectNote(note)"
+        @delete="onDeleteNote"
+        @editEnd="onEditNoteEnd"
+        @editStart="onEditNoteStart"
+        @select="onSelectNote"
+        @addChild="onAddChildNote"
+        @addNoteAfter="onAddNoteAfter"
       />
-      <!-- @addChild="onAddChildNote(note)" -->
       <button class="transparent" @click="onClickButtonAdd">
         <i class="fas fa-plus-square"></i>ノートを追加
       </button>
     </div>
-    <div class="right-view" @click.self="onEditNoteEnd">
+    <div class="right-view" @click.self="onEditNoteEnd()">
       <template v-if="selectedNote == null">
         <div class="no-selected-note">ノートを選択してください</div>
       </template>
       <template v-else>
         <div class="path">
-          <!-- <small>{{ selectedPath }}</small> -->
+          <small>{{ selectedPath }}</small>
         </div>
         <div class="note-content">
           <h3 class="note-title">{{ selectedNote.name }}</h3>
@@ -43,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import NoteItem from './parts/NoteItem.vue';
 import WidgetItem from './parts/WidgetItem.vue';
 
@@ -51,38 +54,50 @@ const noteList: any = ref([]);
 const selectedNote: any = ref(null);
 
 
-
-
-function onClickButtonAdd(targetList: any): void {
+const onAddNoteCommon = (targetList: any, layer: any, index: any) => {
+  layer = layer || 1;
   const note = {
     id: new Date().getTime().toString(16),
-    name: "新規ノート!",
+    name: '新規ノート!-' + layer + '-' + targetList.length,
     mouseover: false,
     editing: false,
     selected: false,
     children: [],
+    layer: layer,
     widgetList: [],
   }
-  onAddWidgetCommon(note.widgetList, null, null)
-  noteList.value.push(note)
+  onAddWidgetCommon(note.widgetList, layer, index)
+  if (index == null) {
+    targetList.push(note);
+  } else {
+    targetList.splice(index + 1, 0, note);
+  }
 }
 
-// function onAddChildNote(note: any) {
-//   // console.log('test    ' + note.children)
-//   note.children.push({
-//     id: new Date().getTime().toString(16),
-//     name: 'の子',
-//     mouseover: false,
-//     editing: false,
-//     // children: [],
-//   });
-// }
+const onClickButtonAdd = (): void => {
+  onAddNoteCommon(noteList.value, null, null)
+}
+
+function onAddChildNote(note: any) {
+  onAddNoteCommon(note.children, note.layer + 1, null)
+}
+
+const onAddNoteAfter = (parentNote: any, note: any) => {
+  const targetList = parentNote == null
+    ? noteList.value
+    : parentNote.children;
+  const layer = parentNote == null
+    ? 1
+    : note.layer;
+  const index = targetList.indexOf(note);
+  onAddNoteCommon(targetList, layer, index);
+}
 
 const onSelectNote = (targetNote: any) => {
   const updateSelectStatus = function (targetNote: any, noteList: any) {
-    for (let note of noteList) {
-      note.selected = (note.id === targetNote.id);
-      updateSelectStatus(targetNote, note.children);
+    for (let n of noteList) {
+      n.selected = (n.id === targetNote.id);
+      updateSelectStatus(targetNote, n.children);
     }
   }
   updateSelectStatus(targetNote, noteList.value);
@@ -90,45 +105,50 @@ const onSelectNote = (targetNote: any) => {
   selectedNote.value = targetNote;
 }
 
-function onDeleteNote(note: any): void {
-  // console.log(note)
-  // const targetList = note == !null
-  //   ? noteList.value
-  //   : note.children;
-  // const index = targetList.indexOf(note);
-  // targetList.splice(index, 1);
-
-  const index = noteList.value.indexOf();
-  noteList.value.splice(index, 1);
-
+const onDeleteNote = (parentNote: any, note: any): void => {
+  const targetList = parentNote == null
+    ? noteList.value
+    : parentNote.children;
+  const index = targetList.indexOf(note);
+  targetList.splice(index, 1);
+}
+const onEditNoteStart = (editNote: any, parentNote: any) => {
+  const targetList = parentNote == null
+    ? noteList.value
+    : parentNote.children;
+  for (let n of targetList) {
+    n.editing = (n.id === editNote.id);
+    onEditNoteStart(editNote, n);
+  }
 }
 
-// function onEditNoteStart() {
-//   for (let note of noteList.value) {
-//     note.editing = true;
-//   }
-// }
-function onEditNoteEnd(note: any) {
-  for (let n of noteList.value)
+const onEditNoteEnd = (parentNote?: any) => {
+  const targetList = parentNote == null
+    ? noteList.value
+    : parentNote.children;
+  for (let n of targetList) {
     n.editing = false;
-  // note.children.editing = false;
+    onEditNoteEnd(n);
+  }
+  for (let note of noteList.value) {
+    note.editing = false;
+  }
 }
+const selectedPath = computed(() => {
+  const searchSelectedPath: any = function (noteList: any, path: any) {
+    for (let note of noteList) {
+      const currentPath = path == null ? note.name : `${path} / ${note.name}`;
+      if (note.selected) return currentPath;
+      const selectedPath = searchSelectedPath(note.children, currentPath);
+      if (selectedPath.length > 0) return selectedPath;
+    }
+    return '';
+  }
+  return searchSelectedPath(noteList.value)
+})
 
-// const selectedPath = computed({
-//   const searchSelectedPath = function (noteList, path) {
-//     for (let note of noteList) {
-//       const currentPath = path == null ? note.name : `${path} / ${note.name}`;
-//       if (note.selected) return currentPath;
-//       const selectedPath = searchSelectedPath(note.children, currentPath);
-//       if (selectedPath.length > 0) return selectedPath;
-//     }
-//     return '';
-//   },
-//   return searchSelectedPath(noteList.value)
-// }
 
-
-//##############  Widget ##################
+//##############      Widget      ##################
 
 const onAddWidgetCommon = (targetList: any, layer: any, index: any) => {
   layer = layer || 1;
@@ -169,6 +189,7 @@ const onDeleteWidget = (parentWidget: any, widget: any) => {
 }
 
 </script>
+
 
 <style lang="scss" scoped>
 .main-page {
