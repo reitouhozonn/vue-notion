@@ -13,7 +13,7 @@
           type="text"
           class="transparent"
           v-model="note.name"
-          @keypress.enter="emits('editEnd', parentNote)"
+          @keypress.enter="onClickEditEnd(parentNote)"
         />
       </div>
       <template v-else>
@@ -23,42 +23,41 @@
         <div class="note-name">{{ note.name }}</div>
 
         <div v-show="note.mouseover" class="buttons">
-          <div class="button-icon" v-if="layer < 3" @click="emits('addChild', note)">
+          <div class="button-icon" v-if="layer < 3" @click="onClickChildNote(note)">
             <i class="fas fa-sitemap"></i>
           </div>
-          <div class="button-icon" @click="emits('addNoteAfter', parentNote, note)">
+          <div class="button-icon" @click="onClickAddNoteAfter(parentNote, note)">
             <i class="fas fa-plus-circle"></i>
           </div>
-          <div class="button-icon" @click="emits('editStart', note)">
+          <div class="button-icon" @click="onClickEdit(note)">
             <i class="fas fa-edit"></i>
           </div>
-          <div class="button-icon" @click="emits('delete', parentNote, note)">
+          <div class="button-icon" @click="onClickDelete(parentNote, note)">
             <i class="fas fa-trash"></i>
           </div>
         </div>
       </template>
     </div>
     <div class="child-note">
-      <!-- {{ note }} -->
       <NoteItem
         v-for="childNote in note.children"
-        v-bind:note="childNote"
         v-bind:parentNote="note"
+        v-bind:note="childNote"
         v-bind:key="childNote.id"
         v-bind:layer="layer + 1"
-        @delete="emits('delete', childNote, note)"
-        @editStart="emits('editStart', parentNote)"
-        @editEnd="emits('editEnd', parentNote)"
-        @select="emits('select', childNote)"
-        @addChild="emits('addChild', childNote)"
-        @addNoteAfter="emits('addNoteAfter', childNote, note)"
+        @delete="onClickDelete"
+        @editStart="onClickEdit"
+        @editEnd="onClickEditEnd"
+        @select="onClickSelect"
+        @addChild="onClickChildNote"
+        @addNoteAfter="onClickAddNoteAfter"
       />
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
 
+<script setup lang="ts">
 
 const props = defineProps({
   note: null,
@@ -67,18 +66,16 @@ const props = defineProps({
   layer: null,
 })
 
-// const Props = toRefs(props);
-
 const emits = defineEmits([
   'delete',
   'editStart',
   'editEnd',
   'addChild',
   'select',
-  'note',
-  'parentNote',
   'addNoteAfter',
 ]);
+
+
 
 const vMyFocus = {
   mounted: (el: any): void => {
@@ -93,11 +90,24 @@ function onMouseLeave(): void {
   props.note.mouseover = false;
 }
 
-// const onParentNote = () => {
-//   let targetNote = pNote.value;
-//   return targetNote;
-// }
-
+const onClickDelete = (parentNote: any, note: any) => {
+  emits('delete', parentNote, note);
+}
+const onClickEdit = (note: any) => {
+  emits('editStart', note);
+}
+const onClickEditEnd = (parentNote: any) => {
+  emits('editEnd', parentNote);
+}
+const onClickChildNote = (note: any) => {
+  emits('addChild', note);
+}
+const onClickSelect = (note: any) => {
+  emits('select', note);
+}
+const onClickAddNoteAfter = (parentNote: any, note: any) => {
+  emits('addNoteAfter', parentNote, note);
+}
 
 </script>
 

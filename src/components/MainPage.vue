@@ -1,7 +1,6 @@
 <template>
   <div class="main-page">
-    <div class="left-menu">
-      <!-- @click.self="onEditNoteEnd" -->
+    <div class="left-menu" @click.self="onEditNoteEnd()">
       <NoteItem
         v-for="note in noteList"
         v-bind:note="note"
@@ -18,8 +17,7 @@
         <i class="fas fa-plus-square"></i>ノートを追加
       </button>
     </div>
-    <div class="right-view">
-      <!-- @click.self="onEditNoteEnd" -->
+    <div class="right-view" @click.self="onEditNoteEnd()">
       <template v-if="selectedNote == null">
         <div class="no-selected-note">ノートを選択してください</div>
       </template>
@@ -48,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineComponent } from 'vue';
+import { ref, computed } from 'vue';
 import NoteItem from './parts/NoteItem.vue';
 import WidgetItem from './parts/WidgetItem.vue';
 
@@ -68,7 +66,7 @@ const onAddNoteCommon = (targetList: any, layer: any, index: any) => {
     layer: layer,
     widgetList: [],
   }
-  // onAddWidgetCommon(note.widgetList, layer, index)
+  onAddWidgetCommon(note.widgetList, layer, index)
   if (index == null) {
     targetList.push(note);
   } else {
@@ -85,8 +83,12 @@ function onAddChildNote(note: any) {
 }
 
 const onAddNoteAfter = (parentNote: any, note: any) => {
-  const targetList = parentNote == null ? noteList.value : parentNote.children;
-  const layer = parentNote == null ? 1 : note.layer;
+  const targetList = parentNote == null
+    ? noteList.value
+    : parentNote.children;
+  const layer = parentNote == null
+    ? 1
+    : note.layer;
   const index = targetList.indexOf(note);
   onAddNoteCommon(targetList, layer, index);
 }
@@ -104,29 +106,26 @@ const onSelectNote = (targetNote: any) => {
 }
 
 const onDeleteNote = (parentNote: any, note: any): void => {
-  // console.log(parentNote, note)
   const targetList = parentNote == null
     ? noteList.value
     : parentNote.children;
   const index = targetList.indexOf(note);
-  console.log(parentNote, note)
   targetList.splice(index, 1);
-  // const index = noteList.value.indexOf();
-  // noteList.value.splice(index, 1);
 }
 const onEditNoteStart = (editNote: any, parentNote: any) => {
-  // for (let n of noteList.value) {
-  //   n.editing = (n.id === note.id);
-  // }
-  const targetList = parentNote == null ? noteList.value : parentNote.children;
+  const targetList = parentNote == null
+    ? noteList.value
+    : parentNote.children;
   for (let n of targetList) {
     n.editing = (n.id === editNote.id);
     onEditNoteStart(editNote, n);
   }
 }
 
-const onEditNoteEnd = (parentNote: any) => {
-  const targetList = parentNote == null ? noteList.value : parentNote.children;
+const onEditNoteEnd = (parentNote?: any) => {
+  const targetList = parentNote == null
+    ? noteList.value
+    : parentNote.children;
   for (let n of targetList) {
     n.editing = false;
     onEditNoteEnd(n);
@@ -149,7 +148,7 @@ const selectedPath = computed(() => {
 })
 
 
-//##############  Widget ##################
+//##############      Widget      ##################
 
 const onAddWidgetCommon = (targetList: any, layer: any, index: any) => {
   layer = layer || 1;
