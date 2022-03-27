@@ -7,14 +7,27 @@
       v-bind:class="{ mouseover: widget.mouseover }"
     >
       <template v-if="widget.type == 'heading'">
-        <input type="text" v-model="widget.text" class="heading transparent" placeholder="見出し" />
+        <input
+          type="text"
+          v-my-focus="'input'"
+          v-model="widget.text"
+          class="heading transparent"
+          placeholder="見出し"
+        />
       </template>
       <template v-if="widget.type == 'body'">
-        <input type="text" v-model="widget.text" class="body transparent" placeholder="本文" />
+        <input
+          type="text"
+          v-my-focus="'input'"
+          v-model="widget.text"
+          class="body transparent"
+          placeholder="本文"
+        />
       </template>
       <template v-if="widget.type == 'code'">
         <textarea
           v-model="widget.text"
+          v-my-focus="'textarea'"
           class="code"
           rows="1"
           placeholder="コード"
@@ -22,13 +35,13 @@
         ></textarea>
       </template>
       <div v-show="widget.mouseover" class="buttons">
-        <div class="button-icon" v-if="layer < 3" @click="emits('addChild', widget)">
+        <div class="button-icon" v-if="layer < 3" @click="onClickChildWidget(widget)">
           <i class="fas fa-sitemap"></i>
         </div>
-        <div class="button-icon" @click="emits('addWidgetAfter', parentWidget, widget)">
+        <div class="button-icon" @click="onClickAddWidgetAfter(parentWidget, widget)">
           <i class="fas fa-plus-circle"></i>
         </div>
-        <div class="button-icon" @click="emits('delete', parentWidget, widget)">
+        <div class="button-icon" @click="onClickDelete(parentWidget, widget)">
           <i class="fas fa-trash"></i>
         </div>
         <div class="button-icon">
@@ -48,9 +61,9 @@
         v-bind:parentWidget="widget"
         v-bind:layer="layer + 1"
         v-bind:key="childWidget.id"
-        @delete="emits('delete', parentWidget, widget)"
-        @addChild="emits('addChild', widget)"
-        @addWidgetAfter="emits('addWidgetAfter', parentWidget, widget)"
+        @delete="onClickDelete"
+        @addChild="onClickChildWidget"
+        @addWidgetAfter="onClickAddWidgetAfter"
       />
     </div>
   </div>
@@ -81,6 +94,12 @@ const onMouseLeave = () => {
   props.widget.mouseover = false
 }
 
+const vMyFocus = {
+  mounted: (el: any): void => {
+    el.focus();
+  }
+}
+
 const resizeCodeTextarea = () => {
   if (props.widget.type !== 'code') return;
   const textarea: any = codeHeightId.value;
@@ -94,6 +113,16 @@ const resizeCodeTextarea = () => {
 watch(() => props.widget.text, () => {
   resizeCodeTextarea()
 });
+
+const onClickDelete = (parentWidget: any, widget: any) => {
+  emits('delete', parentWidget, widget)
+}
+const onClickChildWidget = (widget: any) => {
+  emits('addChild', widget)
+}
+const onClickAddWidgetAfter = (parentWidget: any, widget: any) => {
+  emits('addWidgetAfter', parentWidget, widget)
+}
 
 </script>
 
@@ -121,10 +150,13 @@ watch(() => props.widget.text, () => {
       border-radius: 5px;
     }
   }
+  input {
+    background-color: rgb(232, 231, 228);
+  }
   input.heading {
     font-size: 20px;
     font-weight: bold;
-    border-bottom: 1.5px solid #e0e0e0;
+    border-bottom: 1px solid #bbbbba;
   }
   .code {
     width: calc(100% - 120px);

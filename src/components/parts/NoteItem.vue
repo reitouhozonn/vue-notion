@@ -4,7 +4,7 @@
       class="note"
       @mouseover="onMouseOver"
       @mouseleave="onMouseLeave"
-      @click="emits('select', note)"
+      @click="onClickSelect(note)"
       v-bind:class="{ mouseover: note.mouseover && !note.editing, selected: note.selected }"
     >
       <div v-if="note.editing">
@@ -32,7 +32,7 @@
           <div class="button-icon" @click="onClickEdit(note)">
             <i class="fas fa-edit"></i>
           </div>
-          <div class="button-icon" @click="onClickDelete(parentNote, note)">
+          <div class="button-icon" @click.stop="onClickDelete(parentNote, note)">
             <i class="fas fa-trash"></i>
           </div>
         </div>

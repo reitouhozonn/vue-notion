@@ -1,6 +1,10 @@
 <template>
   <div class="main-page">
     <div class="left-menu" @click.self="onEditNoteEnd()">
+      <!-- 保存ボタン -->
+      <button class="transparent" @click="onClickButtonSave">
+        <i class="fas fa-save"></i> 内容を保存
+      </button>
       <NoteItem
         v-for="note in noteList"
         v-bind:note="note"
@@ -46,13 +50,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, Static } from 'vue';
 import NoteItem from './parts/NoteItem.vue';
 import WidgetItem from './parts/WidgetItem.vue';
+
+import { useToast } from "vue-toastification";
 
 const noteList: any = ref([]);
 const selectedNote: any = ref(null);
 
+
+const localData = localStorage.getItem('NoteItem');
+if (localData != null) {
+  noteList.value = JSON.parse(localData);
+}
+
+const onClickButtonSave = () => {
+  localStorage.setItem('NoteItem', JSON.stringify(noteList.value))
+  const toast = useToast();
+  toast.success('ノートを保存しました。');
+}
 
 const onAddNoteCommon = (targetList: any, layer: any, index: any) => {
   layer = layer || 1;
@@ -111,7 +128,10 @@ const onDeleteNote = (parentNote: any, note: any): void => {
     : parentNote.children;
   const index = targetList.indexOf(note);
   targetList.splice(index, 1);
+  if (targetList.id === selectedNote.id)
+    selectedNote.value = null;
 }
+
 const onEditNoteStart = (editNote: any, parentNote: any) => {
   const targetList = parentNote == null
     ? noteList.value
@@ -154,7 +174,7 @@ const onAddWidgetCommon = (targetList: any, layer: any, index: any) => {
   layer = layer || 1;
   const widgetItems = {
     id: new Date().getTime().toString(16),
-    type: "heading",
+    type: layer === 1 ? "heading" : "body",
     text: "",
     mouseover: false,
     children: [],
@@ -174,19 +194,32 @@ const onAddChildWidget = (widget: any) => {
   onAddWidgetCommon(widget.children, widget.layer + 1, null)
 }
 
-const onAddWidgetAfter = (parentWidget: any, note: any) => {
-  const targetList = parentWidget == null ? selectedNote.value.widgetList : parentWidget.children;
-  const layer = parentWidget == null ? null : parentWidget.layer + 1;
-  const index = targetList.indexOf(note)
-  console.log(note)
+const onAddWidgetAfter = (parentWidget: any, widget: any) => {
+  const targetList = parentWidget == null
+    ? selectedNote.value.widgetList
+    : parentWidget.children;
+  const layer = parentWidget == null
+    ? null
+    : parentWidget.layer + 1;
+  const index = targetList.indexOf(widget)
   onAddWidgetCommon(targetList, layer, index);
 }
 
 const onDeleteWidget = (parentWidget: any, widget: any) => {
-  const targetList = parentWidget == null ? selectedNote.value.widgetList : parentWidget.children;
+  const targetList = parentWidget == null
+    ? selectedNote.value.widgetList
+    : parentWidget.children;
   const index = targetList.indexOf(widget);
   targetList.splice(index, 1);
+
+  const focusWidget = (index === 0)
+    ? parentWidget
+    : targetList[index - 1];
+  if (focusWidget != null) {
+    focusWidget.id = (parseInt(focusWidget.id, 16) + 1).toString(16);
+  }
 }
+
 
 </script>
 
@@ -203,7 +236,7 @@ const onDeleteWidget = (parentWidget: any, widget: any) => {
   .right-view {
     flex-grow: 1;
     padding: 10px;
-    background-color: #f7f6f3;
+    background-color: rgb(232, 231, 228);
     .no-selected-note {
       text-align: center;
       font-size: 25px;
