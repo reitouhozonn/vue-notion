@@ -14,21 +14,6 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('./components/MainPage.vue'),
   },
   {
-    path: "/study/binding",
-    name: "binding",
-    component: () => import('./components/study/BindingPage.vue'),
-  },
-  {
-    path: "/study/directive",
-    name: "directive",
-    component: () => import('./components/study/DirectivePage.vue'),
-  },
-  {
-    path: "/study/event",
-    name: "event",
-    component: () => import('./components/study/EventPage.vue'),
-  },
-  {
     path: "/*",
     redirect: "main"
   }
