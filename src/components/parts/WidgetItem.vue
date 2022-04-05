@@ -70,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, watchEffect, watchPostEffect } from 'vue';
 
 
 const props = defineProps({
@@ -103,7 +103,7 @@ const vMyFocus = {
 const resizeCodeTextarea = () => {
   if (props.widget.type !== 'code') return;
   const textarea: any = codeHeightId.value;
-  const promise = new Promise(function (resolve: any) {
+  const promise = new Promise(function (resolve) {
     resolve(textarea.style = 'auto')
   });
   promise.then(function () {
@@ -113,6 +113,9 @@ const resizeCodeTextarea = () => {
 watch(() => props.widget.text, () => {
   resizeCodeTextarea()
 });
+watchPostEffect(() => {
+  resizeCodeTextarea()
+})
 
 const onClickDelete = (parentWidget: any, widget: any) => {
   emits('delete', parentWidget, widget)
