@@ -13,18 +13,21 @@ import NavigationBar from './components/NavigationBar.vue';
 
 <style>
 #app {
-  height: 100vh;
+  height: 100vh
 }
+
 button.transparent {
   margin: 5px;
   background: transparent;
   border: none;
 }
+
 input.transparent {
   width: 100%;
   border: none;
   background-color: #f7f6f3;
 }
+
 input.transparent:focus {
   outline: none;
   -webkit-box-shadow: none;

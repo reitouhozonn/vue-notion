@@ -5,15 +5,8 @@
     <a class="navbar-brand" href="/main">CodeMemo.β</a>
 
     <!-- 画面サイズに応じて折りたたむ設定  -->
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-toggle="collapse"
-      data-target="#navbarText"
-      aria-controls="navbarText"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
+      aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
@@ -54,7 +47,7 @@
 </script>
 
 <style scoped lang="scss">
-.navigation-bar {
-  height: 3vh;
+.navbar {
+  height: 7vh;
 }
 </style>

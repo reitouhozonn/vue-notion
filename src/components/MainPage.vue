@@ -5,18 +5,9 @@
       <button class="transparent" @click="onClickButtonSave">
         <i class="fas fa-save"></i> 内容を保存
       </button>
-      <NoteItem
-        v-for="note in noteList"
-        v-bind:note="note"
-        v-bind:layer="1"
-        v-bind:key="note.id"
-        @delete="onDeleteNote"
-        @editEnd="onEditNoteEnd"
-        @editStart="onEditNoteStart"
-        @select="onSelectNote"
-        @addChild="onAddChildNote"
-        @addNoteAfter="onAddNoteAfter"
-      />
+      <NoteItem v-for="note in noteList" v-bind:note="note" v-bind:layer="1" v-bind:key="note.id" @delete="onDeleteNote"
+        @editEnd="onEditNoteEnd" @editStart="onEditNoteStart" @select="onSelectNote" @addChild="onAddChildNote"
+        @addNoteAfter="onAddNoteAfter" />
       <button class="transparent" @click="onClickButtonAdd">
         <i class="fas fa-plus-square"></i>ノートを追加
       </button>
@@ -31,15 +22,9 @@
         </div>
         <div class="note-content">
           <h3 class="note-title">{{ selectedNote.name }}</h3>
-          <WidgetItem
-            v-for="widget in selectedNote.widgetList"
-            v-bind:widget="widget"
-            v-bind:layer="1"
-            v-bind:key="widget.id"
-            @delete="onDeleteWidget"
-            @addChild="onAddChildWidget"
-            @addWidgetAfter="onAddWidgetAfter"
-          />
+          <WidgetItem v-for="widget in selectedNote.widgetList" v-bind:widget="widget" v-bind:layer="1"
+            v-bind:key="widget.id" @delete="onDeleteWidget" @addChild="onAddChildWidget"
+            @addWidgetAfter="onAddWidgetAfter" />
           <button class="transparent" @click="onClickButtonAddWidget">
             <i class="fas fa-plus-square"></i>ウィジェットを追加
           </button>
@@ -231,25 +216,32 @@ const onDeleteWidget = (parentWidget: any, widget: any) => {
 
   .left-menu {
     width: 350px;
+    overflow: scroll;
     background-color: #bbbbba;
   }
+
   .right-view {
     flex-grow: 1;
+    overflow: scroll;
     padding: 10px;
     background-color: rgb(232, 231, 228);
+
     .no-selected-note {
       text-align: center;
       font-size: 25px;
       margin: 20px;
     }
+
     .path {
       text-align: left;
       margin-bottom: 50px;
     }
+
     .note-content {
       max-width: 900px;
       margin: 0 auto;
       text-align: left;
+
       .note-title {
         margin-bottom: 25px;
       }
