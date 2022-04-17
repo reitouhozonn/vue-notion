@@ -6,6 +6,7 @@ import Toast, { PluginOptions } from "vue-toastification";
 import "vue-toastification/dist/index.css";
 
 
+
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/main",
