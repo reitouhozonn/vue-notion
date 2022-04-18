@@ -2,7 +2,7 @@
   <!-- ナビゲーションバーをダークテーマで作成 -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <!-- タイトル -->
-    <a class="navbar-brand" href="/main">CodeMemo.β</a>
+    <a class="navbar-brand" href="/">CodeMemo.β</a>
 
     <!-- 画面サイズに応じて折りたたむ設定  -->
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"

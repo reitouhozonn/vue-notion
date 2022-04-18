@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 
 <head>
   <meta charset="UTF-8" />
@@ -12,10 +12,131 @@
   <link rel="icon" href="/logo.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CodeMemo.β</title>
+  <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-auth-compat.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth__ja.js"></script>
+  <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.css" />
+
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+
+    // import firebase from "firebase/compat/app";
+    // import 'firebase/compat/auth';
+    // import * as firebaseui from "firebaseui";
+    // import "firebaseui/dist/firebaseui.css";
+
+    // // import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js";
+    // import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-analytics.js";
+    // import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+
+    // const firebaseConfig = {
+    //   apiKey: "AIzaSyC6fk3qSBe9GkvmgN-F8GAuH1pe9lcj0B4",
+    //   authDomain: "codememo-2d69e.firebaseapp.com",
+    //   projectId: "codememo-2d69e",
+    //   storageBucket: "codememo-2d69e.appspot.com",
+    //   messagingSenderId: "5454883495",
+    //   appId: "1:5454883495:web:f28f64d25533e11b690982",
+    //   measurementId: "G-2VVWX1BR55"
+    // };
+
+    // Initialize Firebase
+    // const app = initializeApp(firebaseConfig);
+    // const app = firebase.initializeApp(firebaseConfig);
+
+    // const ui = new firebaseui.auth.AuthUI(app.auth());
+    // ui.start('#firebaseui-auth-container', uiConfig);
+
+    // firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+    // const analytics = getAnalytics(app);
+    // const auth = getAuth();
+    // onAuthStateChanged(auth, user => {
+    //   // Check for user status
+    // });
+
+
+  </script>
+
+
+
+  <script type="text/javascript">
+
+    // FirebaseUI config.
+    var uiConfig = {
+      signInSuccessUrl: '<url-to-redirect-to-on-success>',
+      signInOptions: [
+        // Leave the lines as is for the providers you want to offer your users.
+        firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+        // firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+        // firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+        // firebase.auth.GithubAuthProvider.PROVIDER_ID,
+        firebase.auth.EmailAuthProvider.PROVIDER_ID,
+        // firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+        // firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID
+      ],
+      // tosUrl and privacyPolicyUrl accept either url string or a callback
+      // function.
+      // Terms of service url/callback.
+      tosUrl: '<your-tos-url>',
+      // Privacy policy url/callback.
+      privacyPolicyUrl: function () {
+        window.location.assign('<your-privacy-policy-url>');
+      }
+    };
+
+    initApp = function () {
+      firebase.auth().onAuthStateChanged(function (user) {
+        if (user) {
+          // User is signed in.
+          var displayName = user.displayName;
+          var email = user.email;
+          var emailVerified = user.emailVerified;
+          var photoURL = user.photoURL;
+          var uid = user.uid;
+          var phoneNumber = user.phoneNumber;
+          var providerData = user.providerData;
+          user.getIdToken().then(function (accessToken) {
+            document.getElementById('sign-in-status').textContent = 'Signed in';
+            document.getElementById('sign-in').textContent = 'Sign out';
+            document.getElementById('account-details').textContent = JSON.stringify({
+              displayName: displayName,
+              email: email,
+              emailVerified: emailVerified,
+              phoneNumber: phoneNumber,
+              photoURL: photoURL,
+              uid: uid,
+              accessToken: accessToken,
+              providerData: providerData
+            }, null, '  ');
+          });
+        } else {
+          // User is signed out.
+          document.getElementById('sign-in-status').textContent = 'Signed out';
+          document.getElementById('sign-in').textContent = 'Sign in';
+          document.getElementById('account-details').textContent = 'null';
+        }
+      }, function (error) {
+        console.log(error);
+      });
+    };
+
+    window.addEventListener('load', function () {
+      initApp()
+    });
+  </script>
 </head>
 
 <body>
+  <!-- <h1>Welcome to My Awesome App</h1> -->
   <div id="app"></div>
+  <div id="firebaseui-auth-container"></div>
+  <div id="loader"></div>
+  <div id="sign-in-status"></div>
+  <div id="sign-in"></div>
+  <pre id="account-details"></pre>
+
+
   <script type="module" src="/src/main.ts"></script>
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
@@ -24,6 +145,8 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF"
     crossorigin="anonymous"></script>
+
+
 </body>
 
 </html>
